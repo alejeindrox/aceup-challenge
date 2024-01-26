@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Session, type: :model do
   it "is valid with valid attributes" do
-    session = build(:session)
+    session = create(:session)
     expect(session).to be_valid
   end
 
@@ -27,8 +27,12 @@ RSpec.describe Session, type: :model do
   end
 
   it "is invalid with overlapping sessions" do
-    existing_session = create(:session)
-    new_session = build(:session, coach_hash_id: existing_session.coach_hash_id, start: existing_session.start, duration: existing_session.duration)
+    existing_session = create(:session, start: Time.now, duration: 60)
+    new_session = build(:session, start: existing_session.start + 30.minutes, duration: 60)
+
+    puts "Existing Session: #{existing_session.inspect}"
+    puts "New Session: #{new_session.inspect}"
+
     expect(new_session).to_not be_valid
   end
 end
